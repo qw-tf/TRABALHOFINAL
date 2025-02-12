@@ -1,4 +1,5 @@
 import java.time.format.DateTimeParseException;
+import java.util.List;
 
 import Excessoes.*;
 
@@ -8,18 +9,14 @@ import java.time.format.DateTimeFormatter;
 //CLASSE CRIADA PARA FACILITAR E PREVENIR MUITA REPETICAO DE CODIGO DESNESCESSARIA!!!!
 public class Verificador {
     
-        public void verificarDataValidade(String dataDeValidade) throws ProdutoVencidoException{
+        public void verificarDataValidade(String dataDeValidade) throws ProdutoVencidoException, DateTimeParseException{
         //CONSTANTE PARA DECLARAR FORMATACAO!!
         DateTimeFormatter FORMATO = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         //checando se a data esta correta
-        try{
             LocalDate dataValida = LocalDate.parse(dataDeValidade, FORMATO);
             if(dataValida.isBefore(LocalDate.now())){              
                 throw new ProdutoVencidoException("Produto ja esta vencido!"); 
             }
-        }catch(DateTimeParseException e){
-            System.out.println("Data invalida!");
-        }
     }
 
     public void verificarCodigo(int codigo) throws InvalidCodigoException{
@@ -36,8 +33,8 @@ public class Verificador {
     }
 
     public void verificarPreco(double preco) throws InvalidPrecoException{
-            if(preco < 0){
-                throw new InvalidPrecoException("Preco nao pode ser negativo!");
+            if(preco <= 0){
+                throw new InvalidPrecoException("Preco invalido!");
             }
     }
 
@@ -48,7 +45,7 @@ public class Verificador {
     }
 
     public void verificarLimiteDeEstoque(int limiteEstoque, int quantidade) throws LimiteEstoqueException{
-            if(limiteEstoque < 0 || limiteEstoque < quantidade){
+            if(limiteEstoque <= 0 || limiteEstoque < quantidade){
                 throw new LimiteEstoqueException("Limite de estoque invalido!");
             }
     }
@@ -60,5 +57,10 @@ public class Verificador {
             if(opcao.charAt(0) != 's' && opcao.charAt(0) != 'n'){
                 throw new IllegalArgumentException("Digite apenas 's' ou 'n'!");
             }
+    }
+    public  void verificarLista(List<Produto> produtos) throws InvalidListaException{
+        if(produtos.isEmpty()){
+          throw new InvalidListaException("Nao existem produtos cadastrados!");
+        }
     }
 }

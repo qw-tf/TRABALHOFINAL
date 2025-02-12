@@ -10,7 +10,7 @@ public class Produto{
     private double preco;
 
     //variavel static para contar a quantidade total de produtos, e a
-    //variavel para ajudar a carregar os codigos dos produtos corretamente
+    //variavel para ajudar a carregar os codigos dos produtos corretamente"
     private static int proximoCodigo = 1000;
 
     //instancia novo verificador para checar as variaveis
@@ -29,6 +29,12 @@ public class Produto{
     //gets e sets dos atributos
     public int getQuantidade() {
         return quantidade;
+    }
+    public void diminuirQuantidade() throws InvalidQuantidadeException{
+       if(quantidade == 0){
+            throw new InvalidQuantidadeException("Quantidade do produto eh igual a zero!");
+       } 
+        quantidade -= 1; // caso alguma venda seja feita
     }
     public int getCodigo() {
         return codigo;

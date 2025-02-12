@@ -3,17 +3,17 @@ import java.util.List;
 
 public class ManipularArquivo {
     private String nomeArquivo;
-    private ControladorDeEstoque controlador; // instancia privada do manipulador para ser usada
+    private ControladorDeEstoque controlador; // instancia privada do manipulador para ser usada dentro da classe
 
 
-    //construtor base
+    //construtor base que recebe uma instancia de controlador para poder acessar e mudar as variaveis da mesma instancia da main
     public ManipularArquivo(String nomeArquivo, ControladorDeEstoque controlador){
         this.nomeArquivo = nomeArquivo;
         this.controlador = controlador;
         criarArquivo();
     }
 
-    private void criarArquivo(){ //cria arquivo que é chamado somente no construtor
+    private void criarArquivo(){ //metodo para ter certeza que um arquivo é criado quando o objeto manipularArquivo é criado
         File arquivo = new File(nomeArquivo);
         try{
             if(arquivo.createNewFile()){
@@ -24,11 +24,11 @@ public class ManipularArquivo {
         }
     }
 
-    public void carregarProdutos() { // le o arquivo csv ja existente e carrega o que tem nele para as variaveis do programa
+    public void carregarProdutos() { // le o arquivo csv ja existente e carrega o que tem nele para os produtos do programa
         try (BufferedReader maca = new BufferedReader(new FileReader(nomeArquivo))) {
             String linha;
-            boolean cabecalho = true;  
-            int maiorCodigo = 1000; 
+            boolean cabecalho = true;  //variavel para pular o cabeçalho
+            int maiorCodigo = 1000; //para ter certeza que os codigos dos produtos estao sendo carregados corretamente
             while ((linha = maca.readLine()) != null) {
                 if (cabecalho) {
                     cabecalho = false;
@@ -46,26 +46,27 @@ public class ManipularArquivo {
                 String descricao = dados[4].isEmpty() ? null : dados[4];;
                 int limiteEstoque = Integer.parseInt(dados[5]);
                 String dataDeValidade = dados.length > 6 ? dados[6] : null;
-                //checa se foram apenas 5 variaveis, se sim, setta data de validade como null, indicando prod nao perecivel
+                //checa se existem apenas 6 variaveis na linha, se sim, setta data de validade como null, indicando prod nao perecivel
     
                 Produto produto;
-                if (dataDeValidade != null && !dataDeValidade.isEmpty()) { // checa se dvalidade for nula, se nao, é perecivel
+                if (dataDeValidade != null && !dataDeValidade.isEmpty()) { // checa se data de validade for nula, se nao for, é perecivel
                     produto = new ProdutoPerecivel(nome, quantidade, preco, dataDeValidade, limiteEstoque);
                 } else {// cria produto comum
                     produto = new Produto(nome, quantidade, preco, limiteEstoque);
                 }
                 produto.setCodigo(codigo);
                 produto.setDescricao(descricao);
-                Produto.setProximoCodigo(maiorCodigo + 1);
+                Produto.setProximoCodigo(maiorCodigo + 1); //para o proximo produtos carregado ter o codigo correto
                 controlador.aumentarLista(produto);//adiciona o produto carregado do arquivo a lista do controlador para ser modificado
+                controlador.checarEstoqueBaixo(produto); //checa se o produto esta perto de se acabar (abaixo de 20%)
             }
         }catch (IOException e) {
             System.out.println("Erro ao ler arquivo: " + e.getMessage());
         }
     }
 
-    public void salvarArquivo() {
-        List<Produto> produtos = controlador.getProdutos();
+    public void salvarArquivo() { //para salvar o arquivo com os produtos da lista
+        List<Produto> produtos = controlador.getProdutos(); //pega a lista para guardar
         try (BufferedWriter pera = new BufferedWriter(new FileWriter(nomeArquivo, false))) {
             // escreve o cabeçalho do CSV
             pera.write("Código,Nome,Quantidade,Preço,Descrição,Limite de Estoque,Data de Validade");
@@ -93,17 +94,6 @@ public class ManipularArquivo {
             }
         } catch (IOException e) {
             System.out.println("Erro ao sobrescrever o arquivo: " + e.getMessage());
-        }
-    }
-
-    public void imprimirDados() {
-        try (BufferedReader alface = new BufferedReader(new FileReader(nomeArquivo))) {
-            String linha;
-            while ((linha = alface.readLine()) != null) {
-                System.out.println(linha);
-            }
-        } catch (IOException e) {
-            System.out.println("Erro ao ler arquivo:" + e.getMessage());
         }
     }
 

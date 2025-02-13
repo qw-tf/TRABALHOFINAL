@@ -27,10 +27,16 @@ public class Verificador {
     }
 
     //classes para checagem autoexplicativas
-    public void verificarNome(String nome) throws InvalidNameException{
-            if(nome.isBlank() || nome == null){
-                throw new InvalidNameException("Nao pode estar vazio!");
-            }
+    public void verificarNome(String nome) throws InvalidNameException {
+        if (nome == null || nome.trim().isEmpty()) {
+            throw new InvalidNameException("Nome não pode ser vazio!");
+        }
+    
+        //verifica se tem pelo menos uma letra no nome
+        if (!nome.matches(".*\\p{L}.*")) {
+            throw new InvalidNameException("Nome deve conter pelo menos uma letra!");
+        }
+        
     }
 
     public void verificarPreco(double preco) throws InvalidPrecoException{
@@ -111,13 +117,6 @@ public class Verificador {
     public void verificarValor(double valor) throws InvalidValorException {
         if (valor < 0) {
             throw new InvalidValorException("Valor inválido! O valor não pode ser negativo.");
-        }
-    }
-
-    // Método p/ verificar a quantidade de itens e eles não podem ser negativos
-    public void verificarQuantidade(int quantidade) throws InvalidQuantidadeException {
-        if (quantidade < 0) {
-            throw new InvalidQuantidadeException("Quantidade inválida! Não pode ser negativa.");
         }
     }
 }

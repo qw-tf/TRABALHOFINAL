@@ -5,19 +5,20 @@ public class Pedido {
 
     private static int contadorPedidos = 1001;
     private int id;
-    private CadastroCliente cliente;
-    private List<ItemPedido> itensPedido; // Lista dos itens que ele mandou ver no pedido
+    private Cliente cliente; // Alterado para Cliente (pode ser Cliente ou ClienteVip)
+    private List<ItemPedido> itensPedido; // Lista dos itens do pedido
     private double total;
-    private ControladorDeEstoque controladorEstoque; // Esse aqui vai ver se tem estoque pra tudo que ele quer
+    private ControladorDeEstoque controladorEstoque;
 
-    public Pedido(CadastroCliente cliente, ControladorDeEstoque controladorEstoque) {
+    public Pedido(Cliente cliente, ControladorDeEstoque controladorEstoque) {
         this.id = contadorPedidos++;
         this.cliente = cliente;
-        this.itensPedido = new ArrayList<>(); // Aqui guardamos os itens que o cliente vai levar
+        this.itensPedido = new ArrayList<>();
         this.total = 0.0;
         this.controladorEstoque = controladorEstoque;
     }
 
+    // Método para adicionar produto ao pedido
     public void adicionarProduto(Produto produto, int quantidade) {
         try {
             if (quantidade <= 0) {
@@ -25,15 +26,12 @@ public class Pedido {
                 return;
             }
 
-            // Aqui vamos verifica se tem no estoque antes de adicionar. Além do mais,
-            // ninguém irá ser enganado
+            // Verifica se há estoque disponível
             if (controladorEstoque.verificarDisponibilidade(produto, quantidade)) {
                 itensPedido.add(new ItemPedido(produto, quantidade));
-                total += produto.getPreco() * quantidade; // Atualiza o total pedido
+                total += produto.getPreco() * quantidade; // Atualiza o total do pedido
                 System.out.println("Produto " + produto.getNome() + " adicionado ao pedido. Quantidade: " + quantidade);
-            }
-            // temos avisos aqui em baixo, em cima também. Porém, são diferentes
-            else {
+            } else {
                 System.out.println("Estoque insuficiente para " + produto.getNome());
             }
         } catch (Exception e) {
@@ -41,10 +39,10 @@ public class Pedido {
         }
     }
 
+    // Método para finalizar o pedido
     public void finalizarPedido() {
         try {
-            // O que vai acontecer aqui é o seguinte: vamos diminuir no estoque o que foi
-            // pedido
+            // Remove os produtos do estoque
             for (ItemPedido item : itensPedido) {
                 controladorEstoque.removerProduto(item.getProduto().getNome(), item.getQuantidade());
             }
@@ -54,26 +52,36 @@ public class Pedido {
         }
     }
 
+    // Método para exibir os detalhes do pedido
     public void exibirPedido() {
         System.out.println("Pedido #" + id + " do cliente: " + cliente.getNome());
         System.out.println("Produtos no pedido:");
         for (ItemPedido item : itensPedido) {
             System.out.println("- " + item.getProduto().getNome() + " | Quantidade: " + item.getQuantidade() + " | R$ "
-                    + item.getProduto().getPreco()); // Detalhamento
+                    + item.getProduto().getPreco());
         }
-        System.out.println("Total do pedido: R$ " + total); // 'Pague o aluguel' informa sobre
+
+        // Aplica desconto se o cliente for VIP
+        if (cliente instanceof ClienteVip) {
+            double desconto = ((ClienteVip) cliente).calcularDesconto(total);
+            System.out.println("Desconto VIP (5%): R$ " + desconto);
+            System.out.println("Total com desconto: R$ " + (total - desconto));
+        }
+
+        System.out.println("Total do pedido: R$ " + total);
     }
 
+    // Getter para o total do pedido
     public double getTotal() {
         return total;
     }
 
-    // Declara o manipulador como atributo da classe, porque o pedido vai precisar
-    // de um mordomo (String string)
+    // Manipulador de arquivo CSV
     ManipularArquivoVendas manipulador = new ManipularArquivoVendas();
 
+    // Método para formatar o pedido como uma linha CSV
     public String formatarArqVendas() {
-        StringBuilder sb = new StringBuilder(); // Aqui começamos a construir a string do arquivo CSV
+        StringBuilder sb = new StringBuilder();
         sb.append(id).append(";");
         sb.append(cliente.getNome()).append(";");
 
@@ -82,13 +90,12 @@ public class Pedido {
             sb.append(item.getQuantidade()).append(",");
         }
 
-        sb.append(";").append(total); // pedido total
+        sb.append(";").append(total); // Total do pedido
         return sb.toString();
     }
 
+    // Método para salvar o pedido no arquivo CSV
     public void salvarPedidoCSV() {
-        // Aqui 'podemos perceber que:' mandaremos o pedido pro arquivo. Além do mais,
-        // tudo é documentado
         manipulador.escreverCSV(this);
     }
 }

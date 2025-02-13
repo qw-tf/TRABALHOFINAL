@@ -2,21 +2,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GerenciamentoCliente {
-    // Lista pra guardar os clientes cadastrados:
-    private List<CadastroCliente> clientes;
+    private List<Cliente> clientes; // Alterado para Cliente
 
-    // Construtor:
     public GerenciamentoCliente() {
-        this.clientes = new ArrayList<>(); // Inicia a lista de clientes
+        this.clientes = new ArrayList<>();
     }
 
-    // Método pra adicionar um cliente na lista:
-    public void addCadastroCliente(CadastroCliente clientes) {
-        this.clientes.add(clientes);
-        System.out.println("Cliente " + clientes.getNome() + " adicionado com sucesso!!");
+    // Método para adicionar cliente
+    public void addCliente(Cliente cliente) {
+        this.clientes.add(cliente);
+        System.out.println("Cliente " + cliente.getNome() + " adicionado com sucesso!");
     }
 
-    // Método pra listar todos os clientes:
+    // Método para listar clientes
     public void listarClientes() {
         if (clientes.isEmpty()) {
             System.out.println("Nenhum cliente cadastrado.");
@@ -24,26 +22,25 @@ public class GerenciamentoCliente {
         }
 
         System.out.println("Lista de Clientes:");
-        for (CadastroCliente cliente : clientes) {
-            System.out.println("ID: " + cliente.getIdCliente() + " - Nome: " + cliente.getNome());
+        for (Cliente cliente : clientes) {
+            cliente.exibirDados();
+            System.out.println("-------------------");
         }
     }
 
-    public CadastroCliente buscarClientePorCPF(String cpf) {
-        for (CadastroCliente cliente : clientes) {
-            if (cliente.getCpf().equals(cpf)) { // Busca pelo CPF
+    // Método para buscar cliente por nome
+    public Cliente buscarClientePorNome(String nome) {
+        for (Cliente cliente : clientes) {
+            if (cliente.getNome().equalsIgnoreCase(nome)) {
                 return cliente;
             }
         }
-        return null; // Se não achar, retorna null.
+        return null;
     }
 
-    public boolean verificarClienteVip(String cpf) {
-        CadastroCliente cliente = buscarClientePorCPF(cpf);
-        if (cliente != null && cliente instanceof ClienteVip) {
-            return true; // O cliente é VIP
-        }
-        return false; // O cliente não é VIP
+    // Método para verificar se o cliente é VIP
+    public boolean verificarClienteVip(String nome) {
+        Cliente cliente = buscarClientePorNome(nome);
+        return cliente instanceof ClienteVip;
     }
-
 }

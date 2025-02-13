@@ -1,35 +1,31 @@
+
 public class Cliente {
-
-    // atributos:
+    // Atributos unificados (Usuario + Cliente)
     private String nome;
-    private String cpf;
+    private String senha;
 
-    // construtor:
-    public Cliente(String nome, String cpf) {
-        this.nome = nome;
-        this.cpf = cpf;
+    // Construtor simplificado (sem CPF)
+    public Cliente(String nome, String senha) {
+        this.nome = nome.toUpperCase();
+        this.senha = senha;
     }
 
-    // get & set
+    // Getters e Setters
     public String getNome() {
-        return nome;
+        return nome; 
+    }
+    public String getSenha() { 
+        return senha; 
     }
 
     public void setNome(String nome) {
-        this.nome = nome;
+        this.nome = nome; 
+    }
+    public void setSenha(String senha) { 
+        this.senha = senha; 
     }
 
-    public String getCpf() {
-        return cpf;
-    }
-
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
-
-    // Método para exibir informações do cliente:
     public void exibirDados() {
         System.out.println("Nome: " + nome);
-        System.out.println("CPF: " + cpf);
     }
 }

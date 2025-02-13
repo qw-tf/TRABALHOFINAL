@@ -238,6 +238,32 @@ public class ControladorDeEstoque {
             System.out.println("Aviso! Produto (" + p.getNome() + ") esta quase acabando!");
         }
     }
+
+    public boolean verificarDisponibilidade(Produto produto, int quantidade) {
+        if (produto.getQuantidade() >= quantidade) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void removerProduto(String nomeProduto, int quantidade) throws InvalidQuantidadeException {
+        Produto produto = buscarProduto(nomeProduto); // Supondo que exista um método para buscar o produto pelo nome
+        if (produto != null) {
+            int novaQuantidade = produto.getQuantidade() - quantidade;
+            produto.setQuantidade(novaQuantidade);
+            System.out.println("Produto " + nomeProduto + " atualizado no estoque. Nova quantidade: " + novaQuantidade);
+        }
+    }
+
+    public Produto buscarProduto(String nomeProduto) {
+        for (Produto produto : produtos) { // temos lista percorrer
+            if (produto.getNome().equalsIgnoreCase(nomeProduto)) { // Compara o nome do produto
+                return produto;
+            }
+        }
+        return null; // Se não encontrar o produto, retorna null
+    }
     
     public void atualizarNome() { // metodo para mudar o nome de um produto
         try{

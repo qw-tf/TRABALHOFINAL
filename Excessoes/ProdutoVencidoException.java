@@ -1,4 +1,4 @@
-package Excessoes;
+package excessoes;
 public class ProdutoVencidoException extends Exception{
     public ProdutoVencidoException(){
     }

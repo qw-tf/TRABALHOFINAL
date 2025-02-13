@@ -10,7 +10,7 @@ public class ManipularArquivo {
     public ManipularArquivo(String nomeArquivo, ControladorDeEstoque controlador){
         this.nomeArquivo = nomeArquivo;
         this.controlador = controlador;
-        criarArquivo();
+        criarArquivo(); //chama o metodo para criar o arquivo
     }
 
     private void criarArquivo(){ //metodo para ter certeza que um arquivo é criado quando o objeto manipularArquivo é criado
@@ -20,7 +20,7 @@ public class ManipularArquivo {
                 System.out.println("Arquivo criado com sucesso: "  + arquivo.getName());
             }
         }catch(IOException e){
-            System.out.println("Erro ao ler arquivo! " + e.getMessage());
+            System.out.println("Erro ao criar o arquivo! " + e.getMessage());
         }
     }
 
@@ -38,7 +38,8 @@ public class ManipularArquivo {
                 String[] dados = linha.split(","); 
                 int codigo = Integer.parseInt(dados[0]);
                 if(codigo > maiorCodigo){
-                    maiorCodigo = codigo;
+                    maiorCodigo = codigo; // checa se o codigo do produto que esta sendo carregado é maior que 1000,
+                                        // para ter certeza que 
                 }
                 String nome = dados[1];
                 int quantidade = Integer.parseInt(dados[2]);
@@ -67,10 +68,11 @@ public class ManipularArquivo {
 
     public void salvarArquivo() { //para salvar o arquivo com os produtos da lista
         List<Produto> produtos = controlador.getProdutos(); //pega a lista para guardar
-        try (BufferedWriter pera = new BufferedWriter(new FileWriter(nomeArquivo, false))) {
-            // escreve o cabeçalho do CSV
+        try (BufferedWriter pera = new BufferedWriter(new FileWriter(nomeArquivo, false))) { 
+            //isso aqui cria uma instancia local do buffered writer que é fechada automaticamente 
+            //o append false diz que ele reescreve o arquivo inteiro toda vez, ao invez de adicionar ao que ja tem
             pera.write("Código,Nome,Quantidade,Preço,Descrição,Limite de Estoque,Data de Validade");
-            pera.newLine();
+            pera.newLine(); // escreve o cabeçalho do CSV
     
             // escreve os dados de cada produto
             for (Produto produto : produtos) {

@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
-import Excessoes.*; //chama todas as excessoes
+import excessoes.*;
 @SuppressWarnings("resource")
 //supress warning usado para calar a boca do ide sobre scanner nao fechados;
 //senao ele da o erro java.util.NoSuchElementException

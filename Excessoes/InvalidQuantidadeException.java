@@ -1,4 +1,4 @@
-package Excessoes;
+package excessoes;
 public class InvalidQuantidadeException extends Exception{
     public InvalidQuantidadeException(){
     }

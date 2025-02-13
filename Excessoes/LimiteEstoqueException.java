@@ -1,4 +1,4 @@
-package Excessoes;
+package excessoes;
 public class LimiteEstoqueException extends Exception{
     public LimiteEstoqueException(){
     }

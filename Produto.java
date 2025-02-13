@@ -1,6 +1,4 @@
-import Excessoes.InvalidPrecoException;
-import Excessoes.InvalidQuantidadeException;
-import Excessoes.LimiteEstoqueException;
+import excessoes.InvalidQuantidadeException;
 
 public class Produto{
     //atributos pedidos no arquivo,
@@ -16,7 +14,7 @@ public class Produto{
     //instancia novo verificador para checar as variaveis
     Verificador verificador = new Verificador();
 
-    //construtor
+    //construtor da classe
     public Produto(String nome, int quantidade, double preco, int limiteEstoque){
         this.nome = nome;
         this.preco = preco;
@@ -26,15 +24,16 @@ public class Produto{
         codigo = proximoCodigo++; //automaticamente da um novo codigo a um produto
     }
 
+    public void diminuirQuantidade(int num) throws InvalidQuantidadeException{ //metodo para diminuir a quantiade de um produto
+        if(quantidade - num <= 0){
+             throw new InvalidQuantidadeException("Quantidade do produto eh igual a zero!");
+        } 
+         quantidade -= num; // caso alguma venda seja feita
+     }
+
     //gets e sets dos atributos
     public int getQuantidade() {
         return quantidade;
-    }
-    public void diminuirQuantidade() throws InvalidQuantidadeException{
-       if(quantidade == 0){
-            throw new InvalidQuantidadeException("Quantidade do produto eh igual a zero!");
-       } 
-        quantidade -= 1; // caso alguma venda seja feita
     }
     public int getCodigo() {
         return codigo;
@@ -67,16 +66,13 @@ public class Produto{
     public void setNome(String nome){
         this.nome = nome;
     }
-    public void setPreco(double preco) throws InvalidPrecoException{
-        verificador.verificarPreco(preco);
+    public void setPreco(double preco) {
         this.preco = preco;
     }
-    public void setQuantidade(int quantidade) throws InvalidQuantidadeException{
-        verificador.verificarQuantidade(quantidade, limiteEstoque);
+    public void setQuantidade(int quantidade) {
         this.quantidade = quantidade;
     }
-    public void setLimiteDeEstoque(int limiteEstoque) throws LimiteEstoqueException{
-        verificador.verificarLimiteDeEstoque(limiteEstoque, quantidade);
+    public void setLimiteDeEstoque(int limiteEstoque) {
         this.limiteEstoque = limiteEstoque;
     }
     public static void setProximoCodigo(int codigo) {

@@ -1,7 +1,8 @@
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.regex.Pattern;
 
-import Excessoes.*;
+import excessoes.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -11,7 +12,7 @@ public class Verificador {
     
         public void verificarDataValidade(String dataDeValidade) throws ProdutoVencidoException, DateTimeParseException{
         //CONSTANTE PARA DECLARAR FORMATACAO!!
-        DateTimeFormatter FORMATO = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+         final DateTimeFormatter FORMATO = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         //checando se a data esta correta
             LocalDate dataValida = LocalDate.parse(dataDeValidade, FORMATO);
             if(dataValida.isBefore(LocalDate.now())){              
@@ -27,7 +28,7 @@ public class Verificador {
 
     //classes para checagem autoexplicativas
     public void verificarNome(String nome) throws InvalidNameException{
-            if(nome.isBlank()){
+            if(nome.isBlank() || nome == null){
                 throw new InvalidNameException("Nao pode estar vazio!");
             }
     }
@@ -61,6 +62,55 @@ public class Verificador {
     public  void verificarLista(List<Produto> produtos) throws InvalidListaException{
         if(produtos.isEmpty()){
           throw new InvalidListaException("Nao existem produtos cadastrados!");
+        }
+    }
+
+
+    // O que é o matches? é um metodo que ajuda a saber se os dados que colocamos
+    // seguem o formato 'padrão' exigido
+    // Método p/ verificar CPF (deve conter exatamente 11 dígitos)
+    public void verificarCPF(String cpf) throws InvalidCPFException{
+        if (!cpf.matches("\\d{11}")) {
+            throw new InvalidCPFException("CPF inválido! Deve conter exatamente 11 dígitos numéricos.");
+        }
+    }
+
+    // Metodo p/ telefone
+    public void verificarTelefone(String telefone) throws InvalidTelefoneException {
+        // temos obrigação 2 digitos DDD, espaço e os outros 9
+        if (!telefone.matches("\\d{2} \\d{9}")) {
+            throw new InvalidTelefoneException("Telefone inválido! Use o formato XX XXXXXXXXX.");
+        }
+
+    }
+
+    // Método p/ verificar e-mail no padrão básico de e-mail válido
+    public void verificarEmail(String email) throws InvalidEmailException {
+        String regex = "^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$";
+        if (!Pattern.matches(regex, email)) {
+            throw new InvalidEmailException(
+                    "E-mail inválido! Insira um e-mail no formato correto (exemplo: usuario@email.com).");
+        }
+    }
+
+    // Método p/ verificar endereço. Novamente, não pode ser vazio
+    public void verificarEndereco(String endereco) throws InvalidEnderecoException {
+        if (endereco == null || endereco.trim().isEmpty()) {
+            throw new InvalidEnderecoException("Endereço inválido! O campo não pode estar vazio.");
+        }
+    }
+
+    // Método p/ verificar valores monetários (não podem ser negativos)
+    public void verificarValor(double valor) throws InvalidValorException {
+        if (valor < 0) {
+            throw new InvalidValorException("Valor inválido! O valor não pode ser negativo.");
+        }
+    }
+
+    // Método p/ verificar a quantidade de itens e eles não podem ser negativos
+    public void verificarQuantidade(int quantidade) throws InvalidQuantidadeException {
+        if (quantidade < 0) {
+            throw new InvalidQuantidadeException("Quantidade inválida! Não pode ser negativa.");
         }
     }
 }

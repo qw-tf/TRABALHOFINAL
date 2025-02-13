@@ -1,4 +1,4 @@
-package Excessoes;
+package excessoes;
 public class InvalidNameException extends Exception{
     public InvalidNameException(){
     }

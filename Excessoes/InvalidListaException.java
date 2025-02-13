@@ -1,4 +1,4 @@
-package Excessoes;
+package excessoes;
 public class InvalidListaException extends Exception{
     public InvalidListaException(){
     }

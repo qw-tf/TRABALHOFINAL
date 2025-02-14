@@ -8,6 +8,10 @@ public class GerenciamentoCliente {
         this.clientes = new ArrayList<>();
     }
 
+    public List<Cliente> getClientes() {
+        return clientes;
+    }
+    
     // Método para adicionar cliente
     public void addCliente(Cliente cliente) {
         this.clientes.add(cliente);
@@ -31,7 +35,7 @@ public class GerenciamentoCliente {
     // Método para buscar cliente por nome
     public Cliente buscarClientePorNome(String nome) {
         for (Cliente cliente : clientes) {
-            if (cliente.getNome().equalsIgnoreCase(nome)) {
+            if (cliente.getNome().trim().equalsIgnoreCase(nome.trim())) {
                 return cliente;
             }
         }

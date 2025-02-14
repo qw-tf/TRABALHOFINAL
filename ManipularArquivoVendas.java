@@ -20,6 +20,11 @@ public class ManipularArquivoVendas {
 
     // Método para escrever um pedido no CSV
     public void escreverCSV(Pedido pedido) {
+        if (pedido == null) {
+            System.out.println("Erro: O pedido é nulo. Nada foi escrito no arquivo.");
+            return; // Sai do método sem escrever no arquivo
+        }
+
         try (FileWriter escrever = new FileWriter(nomeArquivo, true);
                 BufferedWriter bw = new BufferedWriter(escrever)) {
             bw.write(pedido.formatarArqVendas());

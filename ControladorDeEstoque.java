@@ -254,7 +254,7 @@ public class ControladorDeEstoque {
         }
 
     }
-
+    
     public boolean verificarDisponibilidade(Produto produto, int quantidade) {
         if (produto.getQuantidade() >= quantidade) {
             return true;

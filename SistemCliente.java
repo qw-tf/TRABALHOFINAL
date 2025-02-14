@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
@@ -8,10 +7,13 @@ import excessoes.InvalidNameException;
 import excessoes.InvalidSenhaException;
 
 public class SistemCliente {
-    private List<Cliente> clientes = new ArrayList<>();
+    private List<Cliente> clientes;
     private Verificador verificador = new Verificador();
     private Scanner scan = new Scanner(System.in);
 
+    public SistemCliente(GerenciamentoCliente gerenciador){
+        clientes = gerenciador.getClientes();
+    }
 
     public List<Cliente> getClientes(){
         return clientes;
@@ -71,11 +73,11 @@ public class SistemCliente {
     }
 
     // Método de login
-    public boolean loggarUser() {
+    public Cliente loggarUser() {
         try {
             if (clientes.isEmpty()) {
                 System.out.println("Nenhuma conta cadastrada ainda!");
-                return false;
+                return null;
             }
 
             System.out.println("--Login--");
@@ -88,16 +90,16 @@ public class SistemCliente {
             for (Cliente cliente : clientes) {
                 if (cliente.getNome().equalsIgnoreCase(nome) && cliente.getSenha().equals(senha)) {
                     System.out.println("Bem-vindo(a), " + cliente.getNome() + "!");
-                    return true;
+                    return cliente;
                 }
             }
 
             System.out.println("Nome ou senha incorretos!");
-            return false;
+            return null;
 
         } catch (InvalidSenhaException e) {
             System.out.println(e.getMessage());
-            return false;
+            return null;
         }
     }
     //metodo para excluir clientes da lista
@@ -123,7 +125,7 @@ public class SistemCliente {
                                                                       // clientes corretamente
                     while (iterator.hasNext()) {
                         Cliente cliente = iterator.next();
-                        if (cliente.getNome() == nome) {
+                        if (cliente.getNome().equals(nome)) {
                             System.out.println("Tem certeza que quer excluir (" + cliente.getNome() +") (s/n)?");
                             String opcao = scanner.nextLine();
                             verificador.verificarResposta(opcao); //um ultimo check para ter certeza que o

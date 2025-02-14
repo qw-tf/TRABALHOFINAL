@@ -41,23 +41,6 @@ public class FeedbackCliente {
         }
     }
     
-    public static void informacaoInicial(Scanner sc) {
-        System.out.println("Olá! Você está na página de feedback, aqui você pode deixar seus elogios, reclamações e/ou sugestões. (Pressione 1 para continuar)");
-        int continueAction = 0;
-        while (true) {
-            if (sc.hasNextInt()) {
-                continueAction = sc.nextInt();
-                sc.nextLine();
-                if (continueAction == 1) {
-                    break;
-                }
-            } else {
-                sc.nextLine();
-            }
-            log.warning("Opa. Algo deu errado, tente novamente.\n");
-        }
-    }
-    
     public static void escritorDeTexto() { // escreve o corpo da mensagem de feedback que você deseja.
         log.info("Digite o título do seu feedback.");
         String titulo = feedbackSc.nextLine();
@@ -66,35 +49,12 @@ public class FeedbackCliente {
         escreverFeedback(caminhoFeedback, titulo, texto);
     }
     
-    public static void escreverFeedback(String nomeDoArquivo, String titulo, String texto) { // passa como parametros o caminho, titulo e texto digitados.
+    private static void escreverFeedback(String nomeDoArquivo, String titulo, String texto) { // passa como parametros o caminho, titulo e texto digitados.
         try (BufferedWriter escritorFeed = new BufferedWriter(new FileWriter(nomeDoArquivo, true))) {
             escritorFeed.write("\t=== " + titulo + " ===\n"); // formatação padronizada para mensagem de tiulo
             escritorFeed.write(texto + "\n\n"); // escreve texto.
         } catch (IOException e) {
             log.severe("Erro ao escrever no arquivo: " + e.getMessage()); // erro se não puder escrever a mensagem.
-        }
-    }
-    
-    public static String escolherAcao(Scanner sc) { // wesse bloco serve para escolgher uma ação para realizar: sugestão, elogios ou reclamações.
-        String[] opStrings = {"Elogios", "Reclamações", "Sugestões"};
-        log.info("Escolha o tipo de feedback que você deseja realizar:\n1 - Elogios.\n2 - Reclamações.\n3 - Sugestões.");
-        if (sc.hasNextInt()) {
-            int opcaoFeed = sc.nextInt();
-            sc.nextLine();
-            if (opcaoFeed == 1) {
-                return opStrings[0];
-            } else if (opcaoFeed == 2) {
-                return opStrings[1];
-            } else if (opcaoFeed == 3) {
-                return opStrings[2];
-            } else {
-                log.warning("Opção inválida. Tente novamente."); // caso não digite nenhuma opção válida.
-                return escolherAcao(sc);
-            }
-        } else {
-            sc.nextLine();
-            log.severe("Entrada inválida. Tente novamente."); // caso a mensagem innicial seja inválida.
-            return escolherAcao(sc);
         }
     }
     

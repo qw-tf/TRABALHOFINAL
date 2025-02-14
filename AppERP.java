@@ -5,17 +5,19 @@ public class AppERP {
     public static void main(String[] args){
         
         ControladorDeEstoque controlador = new ControladorDeEstoque();
-        SistemCliente sistema = new SistemCliente();
-        ManipularArquivo manipuladorProdutos = new ManipularArquivo("produtos.csv", controlador);
-        ManipularArquivo manipularUsuarios = new ManipularArquivo("usuarios.csv", sistema);
         GerenciamentoCliente gerenciamento = new GerenciamentoCliente();
+        SistemCliente sistema = new SistemCliente(gerenciamento);
+        ManipularArquivo manipularUsuarios = new ManipularArquivo("usuarios.csv", sistema);
+        ManipularArquivo manipuladorProdutos = new ManipularArquivo("produtos.csv", controlador);
         Pedido pedido = new Pedido(sistema.getClientes(), controlador);
-        RelatorioDeVendas relatorio = new RelatorioDeVendas();
+        RelatorioDeVendas relatorioVendas = new RelatorioDeVendas();
         ManipularArquivoVendas manipuladorVendas = new ManipularArquivoVendas();
 
         manipuladorProdutos.carregarProdutos();
         manipularUsuarios.carregarDadosCliente();
         ManipularArquivoVendas.verificarOuCriarArquivo();
+        FeedbackCliente.verificarOuCriarArquivo();
+        RelatorioDeVendas.verificarOuCriarArquivo();
 
         Scanner scanner = new Scanner(System.in);
         System.out.println("Bem vindo ao Sistema ERP do Supermercado Cosmus.");
@@ -25,7 +27,7 @@ public class AppERP {
             "3-Acessar Sistema de Usuarios.\n4-Salvar e sair.");
             int esclh = scanner.nextInt();
             scanner.nextLine();
-            boolean c = true, c1 = true, c2 = true, c3 = true;
+            boolean c = true, c1 = true, c2 = true, c3 = true, c4 = true;;
             switch (esclh) {
                 case 1:
                 System.out.println("Sistema de estoque:");
@@ -95,7 +97,7 @@ public class AppERP {
                 try{
                         System.out.println("Sistema de vendas: ");
                         while(c2){
-                            System.out.println("1-Cadastrar novo Usuario\n2-Logar em Usuario ja existente\n3-Salvar e sair");
+                            System.out.println("1-Cadastrar novo Usuario\n2-Logar em Usuario ja existente\n3-Voltar");
                             esclh = scanner.nextInt();
                             scanner.nextLine();
                             switch (esclh) {
@@ -103,27 +105,29 @@ public class AppERP {
                                     sistema.cadastrarUser(scanner);
                                     break;
                                 case 2:
-                                    if(sistema.loggarUser()){
+                                Cliente clienteLoggado = sistema.loggarUser();
+                                    if(clienteLoggado!=null){
                                         System.out.println("Opcoes para vendas: ");
                                         while(c3){
-                                            System.out.println("1-Listar Clientes\n2-Exibir produtos disponiveis\n3-Processar pedido de venda" +
-                                            "\n4-Gerar relatorio de vendas\n5-Feedback do cliente\n6-Voltar");
+                                            System.out.println("1-Exibir produtos disponiveis\n2-Processar pedido de venda" +
+                                            "\n3-Gerar relatorio de vendas\n4-Criar Feedback\n5-Ler Feedbacks\n6-Voltar");
                                             esclh = scanner.nextInt();
                                             scanner.nextLine();
                                             switch (esclh) {
                                                 case 1:
-                                                    gerenciamento.listarClientes();
-                                                    break;
-                                                case 2:
                                                     controlador.exibirProdutosDisponiveis();
                                                     break;
+                                                case 2:
+                                                    pedido.processarPedido(scanner, gerenciamento, clienteLoggado);
+                                                    break;
                                                 case 3:
-                                                    pedido.processarPedido(scanner, gerenciamento);
+                                                    relatorioVendas.adicionarRelatorio(scanner);
                                                     break;
                                                 case 4:
-                                                    relatorio.adicionarRelatorio(scanner);
+                                                    FeedbackCliente.escritorDeTexto();
                                                     break;
                                                 case 5:
+                                                    FeedbackCliente.lerFeedback();
                                                     break;
                                                 case 6:
                                                     c3 = false;
@@ -137,8 +141,8 @@ public class AppERP {
                                     }
                                     break;
                                 case 3:
-                                    manipuladorProdutos.salvarProdutos();
-                                    manipularUsuarios.salvarDadoUsuario();
+                                    c2 = false;
+                                    break;
                                 default:
                                     System.err.println("Opcao invalida!");
                                     break;
@@ -150,7 +154,26 @@ public class AppERP {
                         }
                     break;
                 case 3:
-
+                        System.out.println("Sistema de Usuarios:");
+                        while(c4){
+                            System.out.println("1-Imprimir usuarios\n2-Excluir usuarios\n3-Voltar");
+                            esclh = scanner.nextInt();
+                            scanner.nextLine();
+                            switch (esclh) {
+                                case 1:
+                                    gerenciamento.listarClientes();
+                                    break;
+                                case 2:
+                                    sistema.excluirCliente();
+                                    break;
+                                case 3:
+                                    c4 = false;
+                                    break;
+                                default:
+                                    System.err.println("Opcao invalida!");
+                                    break;
+                            }
+                        }
                     break;
                 case 4:
                     manipuladorProdutos.salvarProdutos();

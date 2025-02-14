@@ -7,26 +7,26 @@ public class Pedido {
     private List<Cliente> clientes; // Lista de clientes associados ao pedido
     private List<ItemPedido> itensPedido; // Lista dos itens do pedido
     private double total;
-    private ControladorDeEstoque controladorEstoque;
+    private ControladorDeEstoque controlador;
 
     // Construtor que recebe uma lista de clientes
     public Pedido(List<Cliente> clientes, ControladorDeEstoque controladorEstoque) {
         this.clientes = clientes;
         this.itensPedido = new ArrayList<>();
         this.total = 0.0;
-        this.controladorEstoque = controladorEstoque;
+        this.controlador = controladorEstoque;
     }
 
     // Método para adicionar produto ao pedido
     public void adicionarProduto(Produto produto, int quantidade) {
         try {
             if (quantidade <= 0) {
-                System.out.println("Quantidade inválida! Faça direito, meu chapa!");
+                System.out.println("Quantidade inválida!");
                 return;
             }
 
             // Verifica se há estoque disponível
-            if (controladorEstoque.verificarDisponibilidade(produto, quantidade)) {
+            if (controlador.verificarDisponibilidade(produto, quantidade)) {
                 itensPedido.add(new ItemPedido(produto, quantidade));
                 total += produto.getPreco() * quantidade; // Atualiza o total do pedido
                 System.out.println("Produto " + produto.getNome() + " adicionado ao pedido. Quantidade: " + quantidade);
@@ -43,7 +43,7 @@ public class Pedido {
         try {
             // Remove os produtos do estoque
             for (ItemPedido item : itensPedido) {
-                controladorEstoque.removerProduto(item.getProduto().getNome(), item.getQuantidade());
+                controlador.removerProduto(item.getProduto().getNome(), item.getQuantidade());
             }
             System.out.println("Pedido finalizado com sucesso!");
         } catch (Exception e) {
@@ -52,11 +52,9 @@ public class Pedido {
     }
 
     // Método para exibir os detalhes do pedido
-    public void exibirPedido() {
-        System.out.println("Pedido dos clientes:");
-        for (Cliente cliente : clientes) {
-            System.out.println("- " + cliente.getNome());
-        }
+    public void exibirPedido(Cliente cliente) {
+        System.out.println("Pedido do cliente:");
+        System.out.println("- " + cliente.getNome());
         System.out.println("Produtos no pedido:");
         for (ItemPedido item : itensPedido) {
             System.out.println("- " + item.getProduto().getNome() + " | Quantidade: " + item.getQuantidade() + " | R$ "
@@ -65,12 +63,10 @@ public class Pedido {
 
         // Aplica desconto se algum cliente for VIP
         double descontoTotal = 0.0;
-        for (Cliente cliente : clientes) {
             if (cliente instanceof ClienteVip) {
                 double desconto = ((ClienteVip) cliente).calcularDesconto(total);
                 descontoTotal += desconto;
             }
-        }
 
         if (descontoTotal > 0) {
             System.out.println("Desconto VIP (5%): R$ " + descontoTotal);
@@ -81,28 +77,13 @@ public class Pedido {
     }
 
     // Método para processar o pedido
-    public void processarPedido(Scanner scanner, GerenciamentoCliente gerenciamento) {
-        System.out.println("\n--- Processamento de Pedido ---");
-        boolean adicionarClientes = true;
+    public void processarPedido(Scanner scanner, GerenciamentoCliente gerenciamento, Cliente cliente) {
 
-        // Loop para adicionar clientes ao pedido
-        while (adicionarClientes) {
-            System.out.print("Digite o nome do cliente ou 'sair' para parar de adicionar clientes: ");
-            String nomeCliente = scanner.nextLine();
-
-            if (nomeCliente.equalsIgnoreCase("sair")) {
-                adicionarClientes = false;
-            } else {
-                // Verifica se o cliente existe
-                Cliente cliente = gerenciamento.buscarClientePorNome(nomeCliente);
-                if (cliente != null) {
-                    clientes.add(cliente);
-                    System.out.println("Cliente " + cliente.getNome() + " adicionado ao pedido.");
-                } else {
-                    System.out.println("Cliente não encontrado.");
-                }
-            }
+        if(controlador.getProdutos().isEmpty()){
+            System.out.println("Nao ha produtos para fazer um pedido!");
+            return;
         }
+        System.out.println("\n--- Processamento de Pedido ---");
 
         // Loop para adicionar produtos ao pedido
         boolean pedidoEmAndamento = true;
@@ -114,14 +95,14 @@ public class Pedido {
                 pedidoEmAndamento = false; // Finaliza o pedido
                 this.finalizarPedido();
                 System.out.println("Pedido finalizado.");
-                this.exibirPedido(); // Exibe os detalhes do pedido
+                this.exibirPedido(cliente); // Exibe os detalhes do pedido
             } else {
                 System.out.print("Digite a quantidade: ");
                 int quantidade = scanner.nextInt();
                 scanner.nextLine(); // Limpa o buffer
 
                 // Busca o produto no estoque
-                Produto produto = controladorEstoque.buscarProduto(produtoNome);
+                Produto produto = controlador.buscarProduto(produtoNome);
                 if (produto != null) {
                     // Adiciona o produto ao pedido
                     this.adicionarProduto(produto, quantidade);

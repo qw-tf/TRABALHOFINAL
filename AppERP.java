@@ -3,12 +3,20 @@ import java.util.Scanner;
 
 public class AppERP {
     public static void main(String[] args){
+        
         ControladorDeEstoque controlador = new ControladorDeEstoque();
         SistemCliente sistema = new SistemCliente();
         ManipularArquivo manipuladorProdutos = new ManipularArquivo("produtos.csv", controlador);
         ManipularArquivo manipularUsuarios = new ManipularArquivo("usuarios.csv", sistema);
+        GerenciamentoCliente gerenciamento = new GerenciamentoCliente();
+        Pedido pedido = new Pedido(sistema.getClientes(), controlador);
+        RelatorioDeVendas relatorio = new RelatorioDeVendas();
+        ManipularArquivoVendas manipuladorVendas = new ManipularArquivoVendas();
+
         manipuladorProdutos.carregarProdutos();
         manipularUsuarios.carregarDadosCliente();
+        ManipularArquivoVendas.verificarOuCriarArquivo();
+
         Scanner scanner = new Scanner(System.in);
         System.out.println("Bem vindo ao Sistema ERP do Supermercado Cosmus.");
         while(true){
@@ -17,7 +25,7 @@ public class AppERP {
             "3-Acessar Sistema de Usuarios.\n4-Salvar e sair.");
             int esclh = scanner.nextInt();
             scanner.nextLine();
-            boolean c = true, c1 = true;;
+            boolean c = true, c1 = true, c2 = true, c3 = true;
             switch (esclh) {
                 case 1:
                 System.out.println("Sistema de estoque:");
@@ -84,14 +92,70 @@ public class AppERP {
                     }
                     break;
                 case 2:
-
+                try{
+                        System.out.println("Sistema de vendas: ");
+                        while(c2){
+                            System.out.println("1-Cadastrar novo Usuario\n2-Logar em Usuario ja existente\n3-Salvar e sair");
+                            esclh = scanner.nextInt();
+                            scanner.nextLine();
+                            switch (esclh) {
+                                case 1:
+                                    sistema.cadastrarUser(scanner);
+                                    break;
+                                case 2:
+                                    if(sistema.loggarUser()){
+                                        System.out.println("Opcoes para vendas: ");
+                                        while(c3){
+                                            System.out.println("1-Listar Clientes\n2-Exibir produtos disponiveis\n3-Processar pedido de venda" +
+                                            "\n4-Gerar relatorio de vendas\n5-Feedback do cliente\n6-Voltar");
+                                            esclh = scanner.nextInt();
+                                            scanner.nextLine();
+                                            switch (esclh) {
+                                                case 1:
+                                                    gerenciamento.listarClientes();
+                                                    break;
+                                                case 2:
+                                                    controlador.exibirProdutosDisponiveis();
+                                                    break;
+                                                case 3:
+                                                    pedido.processarPedido(scanner, gerenciamento);
+                                                    break;
+                                                case 4:
+                                                    relatorio.adicionarRelatorio(scanner);
+                                                    break;
+                                                case 5:
+                                                    break;
+                                                case 6:
+                                                    c3 = false;
+                                                    break;
+                                                default:
+                                                    System.err.println("Opcao invalida!");
+                                                    break;
+                                            }
+                                        }
+                                    
+                                    }
+                                    break;
+                                case 3:
+                                    manipuladorProdutos.salvarProdutos();
+                                    manipularUsuarios.salvarDadoUsuario();
+                                default:
+                                    System.err.println("Opcao invalida!");
+                                    break;
+                            }
+                        }
+                        }catch(InputMismatchException e){
+                            System.out.println("Erro, opcao invalida: InputMismatchException");
+                            scanner.nextLine();
+                        }
                     break;
                 case 3:
+
                     break;
                 case 4:
                     manipuladorProdutos.salvarProdutos();
                     manipularUsuarios.salvarDadoUsuario();
-                    scanner.close();
+                    manipuladorVendas.escreverCSV(pedido);
                     System.exit(0);
                 default:
                     System.err.println("Opcao invalida!");
@@ -105,41 +169,3 @@ public class AppERP {
         }
     }
 }
-
-// while(true){
-//     try{
-//     System.out.println("1-Cadastrar novo Usuario\n2-Logar em Usuario ja existente\n3-Salvar e sair");
-//     int esclh = scanner.nextInt(), subEsclh;
-//     scanner.nextLine();
-//     switch (esclh) {
-//         case 1:
-//             sistema.cadastrarUser(scanner);
-//             break;
-//         case 2:
-//             if(sistema.loggarUser()){
-//                 System.out.println("");
-//                 subEsclh = scanner.nextInt();
-//                 scanner.nextLine();
-//                 switch (subEsclh) {
-//                     case 1:
-//                         break;
-//                     case 2:
-//                         break;
-//                     default:
-//                         break;
-//             }
-//             }
-//             break;
-//         case 3:
-//             manipuladorProdutos.salvarProdutos();
-//             manipularUsuarios.salvarDadoUsuario();
-//         default:
-//             System.err.println("Opcao invalida!");
-//             break;
-//     }
-//     }catch(InputMismatchException e){
-//         System.out.println("Erro, opcao invalida: InputMismatchException");
-//         scanner.nextLine();
-//     }
-
-// }

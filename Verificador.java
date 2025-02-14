@@ -1,6 +1,5 @@
 import java.time.format.DateTimeParseException;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import excessoes.*;
 
@@ -85,31 +84,6 @@ public class Verificador {
     public void verificarCPF(String cpf) throws InvalidCPFException{
         if (!cpf.matches("\\d{11}") || !cpf.matches("\\d{11}")) {
             throw new InvalidCPFException("CPF inválido! Deve conter exatamente 11 dígitos numéricos.");
-        }
-    }
-
-    // Metodo p/ telefone
-    public void verificarTelefone(String telefone) throws InvalidTelefoneException {
-        // temos obrigação 2 digitos DDD, espaço e os outros 9
-        if (!telefone.matches("\\d{2} \\d{9}")) {
-            throw new InvalidTelefoneException("Telefone inválido! Use o formato XX XXXXXXXXX.");
-        }
-
-    }
-
-    // Método p/ verificar e-mail no padrão básico de e-mail válido
-    public void verificarEmail(String email) throws InvalidEmailException {
-        String regex = "^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$";
-        if (!Pattern.matches(regex, email)) {
-            throw new InvalidEmailException(
-                    "E-mail inválido! Insira um e-mail no formato correto (exemplo: usuario@email.com).");
-        }
-    }
-
-    // Método p/ verificar endereço. Novamente, não pode ser vazio
-    public void verificarEndereco(String endereco) throws InvalidEnderecoException {
-        if (endereco == null || endereco.trim().isEmpty()) {
-            throw new InvalidEnderecoException("Endereço inválido! O campo não pode estar vazio.");
         }
     }
 

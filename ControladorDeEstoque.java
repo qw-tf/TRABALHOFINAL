@@ -148,6 +148,9 @@ public class ControladorDeEstoque {
                 verificador.verificarLista(produtos);//checa se a lista de produtos esta vazia, se sim
                                                     //joga uma excessao que fecha o metodo
                 rlog.logAutomatic("Removendo produto");
+                for(Produto p : produtos){//imprime os produtos cadastrados para o usuario escolher um pelo codigo
+                    System.out.println("Codigo: " + p.getCodigo() + ", Nome: " + p.getNome());
+                } 
                 System.out.println("Digite o codigo do produto que quer excluir ou '0' para sair: ");
                 codigo = scanner.nextInt();
                 scanner.nextLine();
@@ -579,7 +582,7 @@ public class ControladorDeEstoque {
         for(Produto p : produtos){//imprime os produtos cadastrados para o usuario escolher um pelo codigo
             if(p instanceof ProdutoPerecivel){ // mas ele so imprime se o produto for uma instancia dos produtos pereciveis
                 ProdutoPerecivel perecivel = (ProdutoPerecivel) p;
-                System.out.print("Codigo: " + perecivel.getCodigo() + ", Nome: " + perecivel.getNome()
+                System.out.println("Codigo: " + perecivel.getCodigo() + ", Nome: " + perecivel.getNome()
                     + ", Data de Validade: " + perecivel.getDataDeValidade());
                     produtoEncontrado = true; // muda o booleano caso for encontrado
             }
@@ -637,6 +640,19 @@ public class ControladorDeEstoque {
             System.out.println(e.getMessage());
         } catch (ProdutoVencidoException e) {
             System.out.println(e.getMessage());
+        }
+    }
+
+    public void exibirProdutosDisponiveis() {
+        System.out.println("\n--- Produtos Disponíveis ---");
+        if (produtos.isEmpty()) {
+            System.out.println("Não há produtos disponíveis.");
+        } else {
+            for (Produto produto : produtos) {
+                if(!(produto.getQuantidade() <= 0)){
+                    System.out.println(produto.getNome() + " - Preço: " + produto.getPreco() + " | Quantidade: " + produto.getQuantidade());
+                }
+            }
         }
     }
 

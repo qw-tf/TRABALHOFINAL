@@ -3,7 +3,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ManipularArquivoVendas {
-    private String nomeArquivo = "vendas.csv";
+
+    private String nomeArquivo = "vendas.csv"; // Nome do arquivo de vendas
+
+    // Método para verificar ou criar o arquivo de vendas
+    public static void verificarOuCriarArquivo() {
+        File arquivo = new File("vendas.csv");
+        try {
+            if (arquivo.createNewFile()) {
+                System.out.println("Arquivo de relatórios criado.");
+            }
+        } catch (IOException e) {
+            System.out.println("Erro ao criar o arquivo: " + e.getMessage());
+        }
+    }
 
     // Método para escrever um pedido no CSV
     public void escreverCSV(Pedido pedido) {
@@ -12,7 +25,7 @@ public class ManipularArquivoVendas {
             bw.write(pedido.formatarArqVendas());
             bw.newLine();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Erro ao escrever no arquivo: " + e.getMessage());
         }
     }
 
@@ -25,26 +38,27 @@ public class ManipularArquivoVendas {
                 pedidos.add(linha);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Erro ao ler o arquivo: " + e.getMessage());
         }
         return pedidos;
     }
 
-    // Método para atualizar um pedido no CSV (baseado no ID)
-    public void atualizarCSV(int idPedido, String novaLinha) {
+    // Método para atualizar um pedido no CSV (sem usar ID)
+    public void atualizarCSV(String linhaAntiga, String novaLinha) {
         List<String> linhas = new ArrayList<>();
         try (BufferedReader ler = new BufferedReader(new FileReader(nomeArquivo))) {
             String linha;
             while ((linha = ler.readLine()) != null) {
-                if (linha.startsWith(idPedido + ";")) {
-                    linha = novaLinha;
+                if (linha.equals(linhaAntiga)) { // Procura a linha antiga para substituir
+                    linha = novaLinha; // Substitui pela nova linha
                 }
                 linhas.add(linha);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Erro ao ler o arquivo: " + e.getMessage());
         }
 
+        // Reescreve o arquivo com as linhas atualizadas
         try (FileWriter escritor = new FileWriter(nomeArquivo);
                 BufferedWriter bw = new BufferedWriter(escritor)) {
             for (String l : linhas) {
@@ -52,10 +66,11 @@ public class ManipularArquivoVendas {
                 bw.newLine();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Erro ao sobrescrever o arquivo: " + e.getMessage());
         }
     }
 
+    // Método para gerar relatório de vendas por período
     public void gerarRelatorio(String periodo) {
         // Leitura dos pedidos do arquivo CSV
         List<String> pedidosCSV = lerCSV();
@@ -87,5 +102,4 @@ public class ManipularArquivoVendas {
             }
         }
     }
-
 }

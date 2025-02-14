@@ -1,5 +1,3 @@
-import excessoes.InvalidQuantidadeException;
-
 public class Produto{
     //atributos pedidos no arquivo,
     //escolhemos adicionar código do produto e limite maximo de estoque.
@@ -24,12 +22,6 @@ public class Produto{
         codigo = proximoCodigo++; //automaticamente da um novo codigo a um produto
     }
 
-    public void diminuirQuantidade(int num) throws InvalidQuantidadeException{ //metodo para diminuir a quantiade de um produto
-        if(quantidade - num <= 0){
-             throw new InvalidQuantidadeException("Quantidade do produto eh igual a zero!");
-        } 
-         quantidade -= num; // caso alguma venda seja feita
-     }
 
     //gets e sets dos atributos
     public int getQuantidade() {

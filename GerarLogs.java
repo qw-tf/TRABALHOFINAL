@@ -2,7 +2,6 @@ import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import java.io.IOException;
-import java.util.Date;
 
 public class GerarLogs {
   
@@ -29,7 +28,7 @@ public class GerarLogs {
 
     public void logAutomatic(String corpo) {
         try {
-           log.info("ação realizada ->"+corpo+"<- |" + new Date());
+           log.info("ação realizada ->"+corpo+"<- |");
         } catch (Exception e) {
             System.err.println("Erro ao registrar log: " + e.getMessage());
         }
